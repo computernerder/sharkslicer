@@ -144,7 +144,7 @@ wxString ProgressDialog::FormatString(wxString title)
         m_msg_scrolledWindow->Fit();
     }
 
-    
+
     //Fit();
     return title;
 }
@@ -246,15 +246,15 @@ bool ProgressDialog::Create(const wxString &title, const wxString &message, int 
     if (!HasPDFlag(wxPD_NO_PROGRESS)) {
         m_gauge = new wxGauge(this, wxID_ANY, maximum, wxDefaultPosition, PROGRESSDIALOG_GAUGE_SIZE, gauge_style);
 #ifdef __WXGTK__
-        SetGaugeColor(m_gauge, 
-            StateColor::darkModeColorFor(wxColour("#009688")).GetAsString(), 
+        SetGaugeColor(m_gauge,
+            StateColor::darkModeColorFor(wxColour("#D71920")).GetAsString(),
             StateColor::darkModeColorFor(wxColour("#D9D9D9")).GetAsString()
         );
         m_gauge->SetValue(0);
 #else
         m_gauge->Pulse(); // colors not applied without this. probably it switches to a dc painted version of progressbar
         m_gauge->SetValue(0);
-        m_gauge->SetForegroundColour(wxColour("#009688"));
+        m_gauge->SetForegroundColour(wxColour("#D71920"));
         m_gauge->SetBackgroundColour(wxColour("#D9D9D9"));
         wxGetApp().UpdateDarkUI(m_gauge);
 #endif

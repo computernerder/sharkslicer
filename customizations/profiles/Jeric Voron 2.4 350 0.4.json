@@ -1,0 +1,8 @@
+{
+	"from": "User",
+	"inherits": "Voron 2.4 350 0.4 nozzle",
+	"name": "Jeric Voron 2.4 350 0.4",
+	"print_host": "http://voron.lan",
+	"printer_settings_id": "Jeric Voron 2.4 350 0.4",
+	"version": "2.5.0.0"
+}

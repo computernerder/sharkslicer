@@ -57,7 +57,7 @@ SavePresetDialog::Item::Item(Preset::Type type, const std::string &suffix, wxBox
     m_presets = tab->get_presets();
 
     const Preset &sel_preset  = m_presets->get_selected_preset();
-    std::string   preset_name = sel_preset.is_default ? _u8L("Untitled") : sel_preset.is_system ? (boost::format(("%1% - %2%")) % sel_preset.name % suffix).str() : sel_preset.is_from_bundle() && !sel_preset.alias.empty() ? sel_preset.alias : sel_preset.name;
+    std::string   preset_name = sel_preset.is_default ? _u8L("Jeric Preset") : sel_preset.is_system ? (boost::format(("Jeric %1%")) % sel_preset.name).str() : sel_preset.is_from_bundle() && !sel_preset.alias.empty() ? sel_preset.alias : sel_preset.name;
 
     // if name contains extension
     if (boost::iends_with(preset_name, ".ini")) {
@@ -335,7 +335,7 @@ void SavePresetDialog::build(std::vector<Preset::Type> types, std::string suffix
     SetBackgroundColour(SAVE_PRESET_DIALOG_DEF_COLOUR);
     SetFont(wxGetApp().normal_font());
 
-    if (suffix.empty()) suffix = _u8L_CONTEXT(L_CONTEXT("Copy", "PresetName"), "PresetName");
+    if (suffix.empty()) suffix = _u8L_CONTEXT(L_CONTEXT("Jeric", "PresetName"), "PresetName");
 
     wxBoxSizer *m_Sizer_main = new wxBoxSizer(wxVERTICAL);
 

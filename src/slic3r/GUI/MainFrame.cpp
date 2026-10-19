@@ -114,6 +114,7 @@
 #include "Notebook.hpp"
 #include "GUI_Factories.hpp"
 #include "NotificationManager.hpp"
+#include "ActionRegistry.hpp"
 #include "MarkdownTip.hpp"
 #include "NetworkTestDialog.hpp"
 #include "SceneBenchmark.hpp"
@@ -369,7 +370,7 @@ static wxIcon main_frame_icon(GUI_App::EAppMode app_mode)
     }
     return wxIcon(path, wxBITMAP_TYPE_ICO);
 #else // _WIN32
-    return wxIcon(Slic3r::var("OrcaSlicer_128px.png"), wxBITMAP_TYPE_PNG);
+    return wxIcon(Slic3r::var("jeric_dante_shark.png"), wxBITMAP_TYPE_PNG);
 #endif // _WIN32
 }
 
@@ -3754,6 +3755,8 @@ void MainFrame::init_menubar_as_editor()
 
 #endif
 
+    init_klipper_preheat_menu();
+
 #ifdef _MSW_DARK_MODE
     if (wxGetApp().tabs_as_menu())
         m_menubar->EnableTop(6, false);
@@ -3769,6 +3772,105 @@ void MainFrame::init_menubar_as_editor()
         }, wxID_EXIT);
     }
 #endif // __APPLE__
+}
+
+void MainFrame::init_klipper_preheat_menu()
+{
+    auto run_plugin_action = [this](const char* capability) {
+        const std::string action_id = AppAction::compose_id("plugin_script_action", capability, "klipper_preheat");
+        ActionRegistry& registry = wxGetApp().action_registry();
+
+        AppActionRunResult result;
+        if (!registry.by_id(action_id)) {
+            result = {AppActionRunResult::Level::Error,
+                      _L("Klipper Preheat plugin is not loaded. Open File > Plugins and enable it.")};
+        } else {
+            result = registry.run(action_id);
+        }
+
+        if (!result.message.IsEmpty() && m_plater) {
+            m_plater->get_notification_manager()->push_notification(
+                NotificationType::CustomNotification,
+                result.level == AppActionRunResult::Level::Error ?
+                    NotificationManager::NotificationLevel::ErrorNotificationLevel :
+                    NotificationManager::NotificationLevel::RegularNotificationLevel,
+                into_u8(result.message));
+        }
+        return result.level != AppActionRunResult::Level::Error;
+    };
+
+    append_menu_item(m_topbar->GetPreheatMenu(), wxID_ANY, _L("Start from active filament"),
+                     _L("Preheat the nozzle and bed using the active filament profile"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Preheat from active filament"); },
+                     "", nullptr, []() { return true; }, this);
+
+    for (const char* material : {"PLA", "PETG", "ABS", "ASA", "TPU"}) {
+        const wxString label = _L("Preheat ") + from_u8(material);
+        append_menu_item(m_topbar->GetPreheatMenu(), wxID_ANY, label, label,
+                         [run_plugin_action, material](wxCommandEvent&) {
+                             run_plugin_action((std::string("Preheat ") + material).c_str());
+                         }, "", nullptr, []() { return true; }, this);
+    }
+
+    append_menu_item(m_topbar->GetPreheatMenu(), wxID_ANY, _L("Turn heaters off"),
+                     _L("Set the Klipper nozzle and bed targets to zero"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Cancel preheat"); },
+                     "", nullptr, []() { return true; }, this);
+
+    append_menu_item(m_topbar->GetPreheatMenu(), wxID_ANY, _L("Arm 15-minute safety cooldown"),
+                     _L("Turn heaters off automatically if no print starts"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Arm safety cooldown"); },
+                     "", nullptr, []() { return true; }, this);
+
+    append_menu_item(m_topbar->GetFilamentMenu(), wxID_ANY, _L("Set loaded filament from active profile"),
+                     _L("Synchronize Klipper filament tracking with the selected Orca filament"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Set loaded filament from active profile"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetFilamentMenu(), wxID_ANY, _L("Filament status"), _L("Report Klipper's saved filament state"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Filament status"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetFilamentMenu(), wxID_ANY, _L("Load filament"), _L("Run LOAD_FILAMENT after confirmation"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Load filament"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetFilamentMenu(), wxID_ANY, _L("Unload filament"), _L("Run UNLOAD_FILAMENT after confirmation"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Unload filament"); },
+                     "", nullptr, []() { return true; }, this);
+
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Open live dashboard"),
+                     _L("Show temperatures, state, filament match, and installed Klipper macros"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Open printer dashboard"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Preflight check"), _L("Check connection, activity, and loaded filament"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Printer preflight"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Safe cancel print"),
+                     _L("Cancel through Klipper so the toolhead parks and the Revo retracts safely"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Safe cancel print"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Emergency stop"),
+                     _L("Immediately stop Klipper without cleanup; use only for an immediate hazard"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Emergency stop"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Home printer"), _L("Run G28 after confirmation"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Home printer"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Run bed mesh"), _L("Run G29 after confirmation"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Run bed mesh"); },
+                     "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetPrinterMenu(), wxID_ANY, _L("Open printer web view"),
+                     _L("Open the active printer's Moonraker web interface"),
+                     [this](wxCommandEvent&) { load_printer_url(); },
+                     "", nullptr, []() { return true; }, this);
+
+    append_menu_item(m_topbar->GetSendMenu(), wxID_ANY, _L("Check, upload, and print"),
+                     _L("Run Jeric preflight, then open Orca's native Upload and Print workflow"),
+                     [this, run_plugin_action](wxCommandEvent&) {
+                         if (run_plugin_action("Printer preflight"))
+                             wxPostEvent(m_plater, SimpleEvent(EVT_GLTOOLBAR_SEND_GCODE));
+                     }, "", nullptr, []() { return true; }, this);
+    append_menu_item(m_topbar->GetSendMenu(), wxID_ANY, _L("Preflight only"), _L("Check the printer without uploading"),
+                     [run_plugin_action](wxCommandEvent&) { run_plugin_action("Printer preflight"); },
+                     "", nullptr, []() { return true; }, this);
 }
 
 void MainFrame::set_max_recent_count(int max)
@@ -4786,7 +4888,7 @@ SettingsDialog::SettingsDialog(MainFrame* mainframe)
         SetIcon(wxIcon(szExeFileName, wxBITMAP_TYPE_ICO));
     }
 #else
-    SetIcon(wxIcon(var("OrcaSlicer_128px.png"), wxBITMAP_TYPE_PNG));
+    SetIcon(wxIcon(var("jeric_dante_shark.png"), wxBITMAP_TYPE_PNG));
 #endif // _WIN32
 
     //just hide the Frame on closing

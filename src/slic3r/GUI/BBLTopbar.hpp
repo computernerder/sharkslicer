@@ -50,6 +50,10 @@ public:
     void OnFileToolItem(wxAuiToolBarEvent& evt);
     void OnDropdownToolItem(wxAuiToolBarEvent& evt);
     void OnCalibToolItem(wxAuiToolBarEvent &evt);
+    void OnPreheatToolItem(wxAuiToolBarEvent& evt);
+    void OnFilamentToolItem(wxAuiToolBarEvent& evt);
+    void OnPrinterToolItem(wxAuiToolBarEvent& evt);
+    void OnSendToolItem(wxAuiToolBarEvent& evt);
     void OnMouseLeftDClock(wxMouseEvent& mouse);
     void OnMouseLeftDown(wxMouseEvent& event);
     void OnMouseLeftUp(wxMouseEvent& event);
@@ -69,6 +73,10 @@ public:
     void AddDropDownMenuItem(wxMenuItem* menu_item);
     wxMenu *GetTopMenu();
     wxMenu *GetCalibMenu();
+    wxMenu *GetPreheatMenu();
+    wxMenu *GetFilamentMenu();
+    wxMenu *GetPrinterMenu();
+    wxMenu *GetSendMenu();
     void SetTitle(wxString title);
     void SetMaximizedSize();
     void SetWindowSize();
@@ -96,6 +104,10 @@ private:
     wxMenu m_top_menu;
     wxMenu* m_file_menu;
     wxMenu m_calib_menu;
+    wxMenu m_preheat_menu;
+    wxMenu m_filament_menu;
+    wxMenu m_printer_menu;
+    wxMenu m_send_menu;
     
     CenteredTitle*    m_title_ctrl { nullptr };
     wxString          m_titleText;
@@ -104,6 +116,10 @@ private:
     wxAuiToolBarItem* m_undo_item;
     wxAuiToolBarItem* m_redo_item;
     wxAuiToolBarItem* m_calib_item;
+    wxAuiToolBarItem* m_preheat_item;
+    wxAuiToolBarItem* m_filament_item;
+    wxAuiToolBarItem* m_printer_item;
+    wxAuiToolBarItem* m_send_item;
     wxAuiToolBarItem* maximize_btn;
 
 
@@ -114,4 +130,8 @@ private:
     bool m_skip_popup_file_menu;
     bool m_skip_popup_dropdown_menu;
     bool m_skip_popup_calib_menu;
+    bool m_skip_popup_preheat_menu;
+    bool m_skip_popup_filament_menu;
+    bool m_skip_popup_printer_menu;
+    bool m_skip_popup_send_menu;
 };

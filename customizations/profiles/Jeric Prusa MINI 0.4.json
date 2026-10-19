@@ -1,0 +1,16 @@
+{
+	"from": "User",
+	"inherits": "Prusa MINI 0.4 nozzle",
+	"machine_end_gcode": "PRINT_END",
+	"machine_start_gcode": "PRINT_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single] MATERIAL=[filament_type]",
+	"name": "Jeric Prusa MINI 0.4",
+	"print_host": "http://prusa.lan",
+	"printer_extruder_id": [
+		"1"
+	],
+	"printer_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"printer_settings_id": "Jeric Prusa MINI 0.4",
+	"version": "2.5.0.0"
+}

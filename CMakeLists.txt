@@ -506,6 +506,25 @@ if (APPLE)
     endif ()
 endif ()
 
+# Jeric Dante Slicer: bundle the personal Klipper control plugin and editable
+# printer presets beside the normal application resources.  The Flatpak
+# launcher installs these into the user's profile on first run and preserves
+# later user edits to the printer presets.
+if (SLIC3R_FHS)
+    set(JERIC_CUSTOM_RESOURCE_DIR "${SLIC3R_FHS_RESOURCES}/jeric-custom")
+elseif (NOT CMAKE_MACOSX_BUNDLE)
+    set(JERIC_CUSTOM_RESOURCE_DIR "${CMAKE_INSTALL_PREFIX}/resources/jeric-custom")
+endif ()
+if (DEFINED JERIC_CUSTOM_RESOURCE_DIR)
+    install(FILES customizations/jeric_printer_control.py
+        DESTINATION "${JERIC_CUSTOM_RESOURCE_DIR}"
+        RENAME klipper_preheat.py)
+    install(FILES
+        "customizations/profiles/Jeric Prusa MINI 0.4.json"
+        "customizations/profiles/Jeric Voron 2.4 350 0.4.json"
+        DESTINATION "${JERIC_CUSTOM_RESOURCE_DIR}")
+endif ()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(PkgConfig REQUIRED)
 

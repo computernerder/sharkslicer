@@ -175,7 +175,7 @@ test("Global control colors follow the system while host semantic colors follow 
     await page.emulateMedia({colorScheme: system});
     await page.evaluate(value => {
       document.documentElement.dataset.orcaTheme = value;
-      const colors = value === "light" ? {bg: "#ffffff", fg: "#262e30", muted: "#363636", border: "#dbdbdb", accent: "#009688"} : {bg: "#2d2d31", fg: "#efeff0", muted: "#b2b3b5", border: "#36363b", accent: "#00675b"};
+      const colors = value === "light" ? {bg: "#ffffff", fg: "#262e30", muted: "#363636", border: "#dbdbdb", accent: "#D71920"} : {bg: "#2d2d31", fg: "#efeff0", muted: "#b2b3b5", border: "#36363b", accent: "#780A0F"};
       for (const [key, color] of Object.entries(colors)) document.documentElement.style.setProperty("--orca-" + key, color);
       document.documentElement.style.setProperty("--orca-accent-fg", "#ffffff");
     }, theme);

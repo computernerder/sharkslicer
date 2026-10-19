@@ -583,7 +583,7 @@ void HotEndTable::MarkRelatedItems(const NozzleOption& option)
     );
 
     const static StateColor bd_green(
-        std::pair<wxColour, int>(wxColour("#009688"), StateColor::Normal)
+        std::pair<wxColour, int>(wxColour("#D71920"), StateColor::Normal)
     );
     auto filtered_nozzles = FilterHotEnds(option);
     for (auto nozzle_id : filtered_nozzles) {

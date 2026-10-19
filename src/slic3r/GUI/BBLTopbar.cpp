@@ -52,6 +52,10 @@ enum CUSTOM_ID
     ID_TITLE,
     ID_MODEL_STORE,
     ID_CALIB,
+    ID_PREHEAT,
+    ID_FILAMENT,
+    ID_PRINTER,
+    ID_SEND_PRINT,
     ID_TOOL_BAR = 3200,
     ID_AMS_NOTEBOOK,
 };
@@ -181,19 +185,19 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
     {
         if (item.GetState() & wxAUI_BUTTON_STATE_PRESSED)
         {
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#009688"))); // ORCA
-            dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#D71920"))); // ORCA
+            dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#D71920"))); // ORCA
             dc.DrawRectangle(rect);
         }
         else if ((item.GetState() & wxAUI_BUTTON_STATE_HOVER) || item.IsSticky())
         {
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#009688"))); // ORCA
-            dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#D71920"))); // ORCA
+            dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#D71920"))); // ORCA
 
             // draw an even lighter background for checked item hovers (since
             // the hover background is the same color as the check background)
             if (item.GetState() & wxAUI_BUTTON_STATE_CHECKED)
-                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+                dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#D71920"))); // ORCA
 
             dc.DrawRectangle(rect);
         }
@@ -201,8 +205,8 @@ void BBLTopbarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& i
         {
             // it's important to put this code in an else statement after the
             // hover, otherwise hovers won't draw properly for checked items
-            dc.SetPen(wxPen(StateColor::darkModeColorFor("#009688"))); // ORCA
-            dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#009688"))); // ORCA
+            dc.SetPen(wxPen(StateColor::darkModeColorFor("#D71920"))); // ORCA
+            dc.SetBrush(wxBrush(StateColor::darkModeColorFor("#D71920"))); // ORCA
             dc.DrawRectangle(rect);
         }
     }
@@ -248,6 +252,10 @@ void BBLTopbar::Init(wxFrame* parent)
     m_skip_popup_file_menu = false;
     m_skip_popup_dropdown_menu = false;
     m_skip_popup_calib_menu    = false;
+    m_skip_popup_preheat_menu  = false;
+    m_skip_popup_filament_menu = false;
+    m_skip_popup_printer_menu  = false;
+    m_skip_popup_send_menu     = false;
 
     wxInitAllImageHandlers();
 
@@ -332,6 +340,20 @@ void BBLTopbar::Init(wxFrame* parent)
     m_calib_item                   = this->AddTool(ID_CALIB, _L("Calibration"), calib_bitmap);
     m_calib_item->SetDisabledBitmap(calib_bitmap_inactive);
 
+    this->AddSpacer(FromDIP(10));
+
+    wxBitmap preheat_bitmap = create_scaled_bitmap("param_temperature", nullptr, TOPBAR_ICON_SIZE);
+    m_preheat_item           = this->AddTool(ID_PREHEAT, _L("Preheat"), preheat_bitmap);
+
+    this->AddSpacer(FromDIP(10));
+    m_filament_item = this->AddTool(ID_FILAMENT, _L("Filament"), create_scaled_bitmap("filament", nullptr, TOPBAR_ICON_SIZE));
+
+    this->AddSpacer(FromDIP(10));
+    m_printer_item = this->AddTool(ID_PRINTER, _L("Printer"), create_scaled_bitmap("printer", nullptr, TOPBAR_ICON_SIZE));
+
+    this->AddSpacer(FromDIP(10));
+    m_send_item = this->AddTool(ID_SEND_PRINT, _L("Upload & Print"), create_scaled_bitmap("switch_send_mode_on", nullptr, TOPBAR_ICON_SIZE));
+
     this->AddSpacer(FromDIP(25));
     //this->AddStretchSpacer(1);
 
@@ -377,7 +399,7 @@ void BBLTopbar::Init(wxFrame* parent)
 
     Realize();
     // m_toolbar_h = this->GetSize().GetHeight();
-    m_toolbar_h = FromDIP(30);
+    m_toolbar_h = FromDIP(42);
 
     int client_w = parent->GetClientSize().GetWidth();
     this->SetSize(client_w, m_toolbar_h);
@@ -388,6 +410,10 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFileToolItem, this, ID_TOP_FILE_MENU);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnDropdownToolItem, this, ID_TOP_DROPDOWN_MENU);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnCalibToolItem, this, ID_CALIB);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPreheatToolItem, this, ID_PREHEAT);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFilamentToolItem, this, ID_FILAMENT);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnPrinterToolItem, this, ID_PRINTER);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnSendToolItem, this, ID_SEND_PRINT);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnIconize, this, wxID_ICONIZE_FRAME);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFullScreen, this, wxID_MAXIMIZE_FRAME);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnCloseFrame, this, wxID_CLOSE_FRAME);
@@ -513,6 +539,15 @@ wxMenu* BBLTopbar::GetCalibMenu()
     return &m_calib_menu;
 }
 
+wxMenu* BBLTopbar::GetPreheatMenu()
+{
+    return &m_preheat_menu;
+}
+
+wxMenu* BBLTopbar::GetFilamentMenu() { return &m_filament_menu; }
+wxMenu* BBLTopbar::GetPrinterMenu()  { return &m_printer_menu; }
+wxMenu* BBLTopbar::GetSendMenu()     { return &m_send_menu; }
+
 void BBLTopbar::SetTitle(wxString title)
 {
     m_titleText = title;
@@ -565,6 +600,13 @@ void BBLTopbar::Rescale() {
     item = this->FindTool(ID_CALIB);
     item->SetBitmap(create_scaled_bitmap("calib_sf", this, TOPBAR_ICON_SIZE));
     item->SetDisabledBitmap(create_scaled_bitmap("calib_sf_inactive", this, TOPBAR_ICON_SIZE));
+
+    item = this->FindTool(ID_PREHEAT);
+    item->SetBitmap(create_scaled_bitmap("param_temperature", this, TOPBAR_ICON_SIZE));
+
+    this->FindTool(ID_FILAMENT)->SetBitmap(create_scaled_bitmap("filament", this, TOPBAR_ICON_SIZE));
+    this->FindTool(ID_PRINTER)->SetBitmap(create_scaled_bitmap("printer", this, TOPBAR_ICON_SIZE));
+    this->FindTool(ID_SEND_PRINT)->SetBitmap(create_scaled_bitmap("switch_send_mode_on", this, TOPBAR_ICON_SIZE));
 
     if (m_title_ctrl)
         m_title_ctrl->SetTitle(m_titleText);
@@ -697,6 +739,55 @@ void BBLTopbar::OnCalibToolItem(wxAuiToolBarEvent &evt)
     tb->SetToolSticky(evt.GetId(), false);
 }
 
+void BBLTopbar::OnPreheatToolItem(wxAuiToolBarEvent& evt)
+{
+    wxAuiToolBar* tb = static_cast<wxAuiToolBar*>(evt.GetEventObject());
+
+    tb->SetToolSticky(evt.GetId(), true);
+
+    if (!m_skip_popup_preheat_menu) {
+        auto rec = this->GetToolRect(ID_PREHEAT);
+        GetParent()->PopupMenu(&m_preheat_menu, wxPoint(rec.GetLeft(), this->GetSize().GetHeight() - 2));
+    } else {
+        m_skip_popup_preheat_menu = false;
+    }
+
+    tb->SetToolSticky(evt.GetId(), false);
+}
+
+void BBLTopbar::OnFilamentToolItem(wxAuiToolBarEvent& evt)
+{
+    auto* tb = static_cast<wxAuiToolBar*>(evt.GetEventObject());
+    tb->SetToolSticky(evt.GetId(), true);
+    if (!m_skip_popup_filament_menu) {
+        const auto rec = GetToolRect(ID_FILAMENT);
+        GetParent()->PopupMenu(&m_filament_menu, wxPoint(rec.GetLeft(), GetSize().GetHeight() - 2));
+    } else m_skip_popup_filament_menu = false;
+    tb->SetToolSticky(evt.GetId(), false);
+}
+
+void BBLTopbar::OnPrinterToolItem(wxAuiToolBarEvent& evt)
+{
+    auto* tb = static_cast<wxAuiToolBar*>(evt.GetEventObject());
+    tb->SetToolSticky(evt.GetId(), true);
+    if (!m_skip_popup_printer_menu) {
+        const auto rec = GetToolRect(ID_PRINTER);
+        GetParent()->PopupMenu(&m_printer_menu, wxPoint(rec.GetLeft(), GetSize().GetHeight() - 2));
+    } else m_skip_popup_printer_menu = false;
+    tb->SetToolSticky(evt.GetId(), false);
+}
+
+void BBLTopbar::OnSendToolItem(wxAuiToolBarEvent& evt)
+{
+    auto* tb = static_cast<wxAuiToolBar*>(evt.GetEventObject());
+    tb->SetToolSticky(evt.GetId(), true);
+    if (!m_skip_popup_send_menu) {
+        const auto rec = GetToolRect(ID_SEND_PRINT);
+        GetParent()->PopupMenu(&m_send_menu, wxPoint(rec.GetLeft(), GetSize().GetHeight() - 2));
+    } else m_skip_popup_send_menu = false;
+    tb->SetToolSticky(evt.GetId(), false);
+}
+
 void BBLTopbar::OnMouseLeftDown(wxMouseEvent& event)
 {
     m_last_mouse_position = event.GetPosition();
@@ -787,6 +878,12 @@ void BBLTopbar::OnMenuClose(wxMenuEvent& event)
     else if (item == m_dropdown_menu_item) {
         m_skip_popup_dropdown_menu = true;
     }
+    else if (item == m_preheat_item) {
+        m_skip_popup_preheat_menu = true;
+    }
+    else if (item == m_filament_item) m_skip_popup_filament_menu = true;
+    else if (item == m_printer_item)  m_skip_popup_printer_menu = true;
+    else if (item == m_send_item)     m_skip_popup_send_menu = true;
 }
 
 wxAuiToolBarItem* BBLTopbar::FindToolByCurrentPosition()

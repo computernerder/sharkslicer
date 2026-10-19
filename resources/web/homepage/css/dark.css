@@ -61,7 +61,7 @@ body
 /*-----Right Top MenuBtn-----*/
 .MenuItem:hover
 {
-	border-color: #00675b;
+	border-color: #780A0F;
 	background-color: #223C3C;
 }
 
@@ -80,7 +80,7 @@ body
 
 .CT_Item:hover
 {
-	background-color:#00675b; /*ORCA color*/
+	background-color:#780A0F; /*ORCA color*/
 }
 
 /*----User Manual------*/
@@ -92,7 +92,7 @@ body
 /*---Staff PIck----*/
 #HotModel_Swiper
 {
-	
+
 }
 
 .HotModel_NameText
@@ -141,7 +141,7 @@ body
 	--account-meta         : #949494;
 	--account-border       : #4A4A51;
 	--account-divider      : #3A3A42;
-	--account-action       : #26A69A;
+	--account-action       : #FF3B45;
 	--account-danger       : #FF6A6A;
 	--account-danger-bg    : rgba(225, 71, 71, 0.16);
 	--account-warn-bg      : rgba(240, 126, 74, 0.16);  /*----var(--warn-color) at 16%----*/

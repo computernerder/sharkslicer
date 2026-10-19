@@ -14,7 +14,7 @@ html, body {
     margin: 0px;
     padding: 0px;
 	line-height: 20px;
-    font-size: 16px;	
+    font-size: 16px;
 }
 
 .ZScrol::-webkit-scrollbar {/*滚动条整体样式*/
@@ -47,7 +47,7 @@ html, body {
 .LinkBtn
 {
 	font-size:12px;
-	color: #00ffea;	
+	color: #00ffea;
 	cursor: pointer;
 }
 
@@ -468,13 +468,13 @@ body
 /*------------------*/
 #BtnArea
 {
-	
+
 }
 
 
 .BtnItem
 {
-    padding-left:40px;	
+    padding-left:40px;
 	height:50px;
 	line-height: 50px;
 	display: flex;
@@ -580,7 +580,7 @@ body.cloud-mode #LeftBoard
 
 .MenuItem:hover
 {
-	border-color: #009688;		/*ORCA color*/
+	border-color: #D71920;		/*ORCA color*/
 	background-color: #E5F0EE; /*ORCA color with %25 opacity*/
 }
 
@@ -625,7 +625,7 @@ body.cloud-mode #LeftBoard
 {
 	display:flex;
 	align-items: center;
-	padding: 6px 0px;	
+	padding: 6px 0px;
 }
 
 #HotModel_RIGHT_Title
@@ -666,7 +666,7 @@ body.cloud-mode #LeftBoard
 
 #RecentTitle
 {
-	
+
 }
 
 #FileList
@@ -707,7 +707,7 @@ body.cloud-mode #LeftBoard
 	border-radius: 8px;
 	width: 184px;
 	height: 184px;
-	position: relative;	
+	position: relative;
 }
 
 .FileItem img
@@ -737,7 +737,7 @@ body.cloud-mode #LeftBoard
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    word-break: break-all;	
+    word-break: break-all;
 }
 
 .FileNamePack
@@ -764,7 +764,7 @@ body.cloud-mode #LeftBoard
 	font-size: 10px;
 	font-weight: 600;
 	color: #FFFFFF;
-	background-color: #009688;
+	background-color: #D71920;
 	border-radius: 2px;
 	white-space: nowrap;
 }
@@ -801,7 +801,7 @@ body.cloud-mode #LeftBoard
 .CT_Item:hover
 {
 	cursor: pointer;
-	background-color:#009688; /*ORCA color*/
+	background-color:#D71920; /*ORCA color*/
 	border-radius: 4px;
 	color: #fff;
 }
@@ -811,35 +811,35 @@ body.cloud-mode #LeftBoard
 {
 	margin-right: 6px;
 	width: 16px;
-	height: 16px;	
+	height: 16px;
 }
 
 #CT_Delete_Bar:hover  .CT_Delete
 {
 	background: url("../img/remove2.svg");
 	background-repeat: no-repeat;
-	background-size: contain;	
+	background-size: contain;
 }
 
 .CT_Delete
 {
 	background: url("../img/remove.svg");
 	background-repeat: no-repeat;
-	background-size: contain;	
+	background-size: contain;
 }
 
 #CT_Folder_Bar:hover .CT_Explore
 {
 	background: url("../img/open_folder2.svg");
 	background-repeat: no-repeat;
-	background-size: contain;	
+	background-size: contain;
 }
 
 .CT_Explore
 {
 	background: url("../img/open_folder.svg");
 	background-repeat: no-repeat;
-	background-size: contain;		
+	background-size: contain;
 }
 
 
@@ -851,7 +851,7 @@ body.cloud-mode #LeftBoard
 .CT_Text
 {
 	line-height: 20px;
-	height: 20px;	
+	height: 20px;
 	display: block;
 }
 
@@ -934,7 +934,7 @@ body.cloud-mode #LeftBoard
 @media screen and ( min-width:1681px) and (max-width:2120px ) {
 .GuideBlock
 {
-    width: calc(25% - 20px);	
+    width: calc(25% - 20px);
 	margin: 0px 10px 40px 10px;
 	cursor: pointer;
 }
@@ -972,7 +972,7 @@ body.cloud-mode #LeftBoard
 
 .UG_IMG
 {
-	width: 100%;	
+	width: 100%;
 }
 
 .UG_IMG img
@@ -1015,7 +1015,7 @@ body.cloud-mode #LeftBoard
 	display:flex;
 	align-items: center;
 	height: 28px;
-	padding: 0px 8px;	
+	padding: 0px 8px;
 }
 
 .HotModel_Designer_Info img
@@ -1036,8 +1036,8 @@ body.cloud-mode #LeftBoard
 
 #HotModel_RIGHT_Title:hover
 {
-	cursor: pointer;	
-	color:#009688;	
+	cursor: pointer;
+	color:#D71920;
 }
 
 .HotModelPiece
